@@ -1,0 +1,13 @@
+{
+  "name": "bytestream",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --max-old-space-size=10 test.js",
+    "start": "node main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
