@@ -41,12 +41,17 @@ const getLinesSizeFormArray = (lines) =>
     .map((line) => Buffer.from(line).length)
     .reduce((prev, curr) => curr + prev, 0);
 
-const mergeChunks = async (chunkPaths, outputFilePath) => {
-  const writeStream = fs.createWriteStream(outputFilePath);
+/**
+ *
+ * @param {ReadableStream[]} readableStreams
+ * @param {WritableStream[]} outputFilePath
+ * @returns {void}
+ */
+const mergeChunks = async (readableStreams, outputFileWriteStream) => {
   // change to readline
   // 1. create read streams for all the chunks, merge them into one stream
   // many streams => async iterator => one stream
-  const iterable = concatStreams(chunkPaths.map((f) => fs.createReadStream(f)));
+  const iterable = concatStreams(readableStreams);
   const mergedStream = Readable.from(iterable);
   // basically, we're gonna do like a merge sort
   const mergeArray = [];
@@ -59,14 +64,14 @@ const mergeChunks = async (chunkPaths, outputFilePath) => {
       mergeArray.sort(shouldSwap);
       // 4. write them
       for (const sortedLine of mergeArray) {
-        writeStream.write(sortedLine);
+        outputFileWriteStream.write(sortedLine);
       }
       mergeArray.splice(0);
     }
     mergeArray.push(line);
   }
   // all streams are drained by now
-  writeStream.end();
+  outputFileWriteStream.end();
 };
 
 // TODO fix it
@@ -85,6 +90,7 @@ const sort = ({
   const lineReader = readline.createInterface({
     input: readStream,
   });
+  const outputWriteStream = fs.createWriteStream(outputFilePath);
 
   let chunkIndex = 0;
   let linesSize = 0;
@@ -129,14 +135,14 @@ const sort = ({
         chunks.push(tempFilePath);
         fs.unlink(tempFilePath, () => {});
         // Merge the sorted chunks
-        mergeChunks(chunks);
+        mergeChunks(chunkStreams, outputWriteStream);
       });
       for (const line of sortedLines) {
         writeStream.write(line + "\n");
       }
       writeStream.end();
     } else {
-      mergeChunks(chunks);
+      mergeChunks(chunkStreams, outputWriteStream);
     }
   });
 };
