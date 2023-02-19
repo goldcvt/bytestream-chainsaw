@@ -2,10 +2,10 @@
   "name": "bytestream",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "node --max-old-space-size=10 test.js",
-    "start": "node main.js"
+    "start": "node ."
   },
   "keywords": [],
   "author": "",

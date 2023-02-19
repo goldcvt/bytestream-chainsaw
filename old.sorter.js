@@ -1,18 +1,13 @@
 /**
  * This file contains my first idea for sorting
+ * Just so you can see what I've iterated from (yup, there's git. But whatever)
  */
-const { pipeline } = require("node:stream/promises");
-const { createInterface } = require("node:readline");
-/**
- * A sorting predicate. Compatible with .sort method
- * You can any other one
- * @param {string} leftString
- * @param {string} rightString
- * @returns {number}
- */
-const shouldSwap = (leftString, rightString) =>
-  leftString.length - rightString.length;
 
+// the idea was to recursively call bubbleUpOneStringInChunk, firstly on
+// readable stream from readline, then use streams opened on destFile to rewrite it
+// So it's basically bubbleSort on streams. Problem is we have a 10Tb file
+// which means A LOT of strings
+// so yup, I dropped this idea
 /**
  * Does a bubble sort on a sourceStream, resulting
  * in a destStream with one line in its' place
@@ -42,17 +37,4 @@ const bubbleUpOneStringInChunk = async (
       destinationStream.getWriter().write(line + "\n");
     }
   }
-};
-
-const main = (sortingPredicate) => {
-  // the idea is to recursively call bubbleUpOneStringInChunk, firstly on
-  // readable stream from readline, then use streams opened on destFile to rewrite it
-  // So it's basically bubbleSort on streams. Problem is we have a 10Tb file
-  // which means A LOT of strings
-  // so yup, I dropped this idea
-};
-
-module.exports = {
-  shouldSwap,
-  bubbleUpOneStringInChunk,
 };
